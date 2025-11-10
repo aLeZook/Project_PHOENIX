@@ -14,6 +14,7 @@ import android.util.Log
 import android.content.Intent
 import android.graphics.Color
 import android.view.View
+import android.widget.Switch
 import androidx.fragment.app.commit
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -89,6 +90,9 @@ class LoginActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
+        }
+        findViewById<Button>(R.id.forgotPassButton).setOnClickListener {
+            Toast.makeText(this, "THIS FEATURE IS COMING SOON!", Toast.LENGTH_SHORT).show()
         }
     }
 }

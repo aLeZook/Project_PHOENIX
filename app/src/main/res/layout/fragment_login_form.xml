@@ -13,35 +13,47 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="476dp"
+        android:layout_height="597dp"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/requirementText4"
-            android:layout_width="257dp"
-            android:layout_height="22dp"
-            android:text="- One Special Symbol"
-            app:layout_constraintBottom_toTopOf="@+id/tilPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.77"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/requirementText3"
-            app:layout_constraintVertical_bias="0.222" />
 
         <TextView
-            android:id="@+id/requirementText3"
-            android:layout_width="257dp"
-            android:layout_height="22dp"
-            android:text="- One Upper Case Letter"
+            android:id="@+id/textReq4"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:layout_marginBottom="12dp"
+            android:text="- Passwords Match"
             app:layout_constraintBottom_toTopOf="@+id/tilPassword"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.781"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/requirementText1"
-            app:layout_constraintVertical_bias="0.094" />
+            app:layout_constraintTop_toBottomOf="@+id/tilEmail"
+            app:layout_constraintVertical_bias="0.983"
+            />
+
+        <TextView
+            android:id="@+id/textReq3"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:text="- Uppercase Letter"
+            app:layout_constraintBottom_toTopOf="@+id/tilPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tilEmail"
+            app:layout_constraintVertical_bias="0.61" />
+
+        <TextView
+            android:id="@+id/textReq2"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:text="- Special Symbol"
+            app:layout_constraintBottom_toTopOf="@+id/tilPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tilEmail"
+            app:layout_constraintVertical_bias="0.323" />
 
         <Button
-            android:id="@+id/req3Button"
+            android:id="@+id/reqButton4"
             android:layout_width="32dp"
             android:layout_height="27dp"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -50,27 +62,79 @@
             android:drawableRight="@drawable/error_button_image"
             android:padding="8dp"
             app:layout_constraintBottom_toTopOf="@+id/tilPassword"
-            app:layout_constraintEnd_toStartOf="@+id/requirementText4"
+            app:layout_constraintEnd_toStartOf="@+id/textReq4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/req2Button"
-            app:layout_constraintVertical_bias="0.142" />
+            app:layout_constraintTop_toBottomOf="@+id/reqButton3" />
 
         <Button
-            android:id="@+id/req2Button"
+            android:id="@+id/reqButton3"
             android:layout_width="32dp"
             android:layout_height="27dp"
+            android:layout_marginTop="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:backgroundTint="@color/black"
             android:contentDescription="Close"
             android:drawableRight="@drawable/error_button_image"
             android:padding="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/tilPassword"
-            app:layout_constraintEnd_toStartOf="@+id/requirementText3"
+            app:layout_constraintEnd_toStartOf="@+id/textReq3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/req1Button"
-            app:layout_constraintVertical_bias="0.088" />
+            app:layout_constraintTop_toBottomOf="@+id/reqButton2" />
+
+        <Button
+            android:id="@+id/reqButton2"
+            android:layout_width="32dp"
+            android:layout_height="27dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:backgroundTint="@color/black"
+            android:contentDescription="Close"
+            android:drawableRight="@drawable/error_button_image"
+            android:padding="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/textReq2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reqButton1" />
+
+        <Button
+            android:id="@+id/reqButton1"
+            android:layout_width="32dp"
+            android:layout_height="27dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:backgroundTint="@color/black"
+            android:contentDescription="Close"
+            android:drawableRight="@drawable/error_button_image"
+            android:padding="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/textReq1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tilEmail" />
 
         <!-- Title -->
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPassword2"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Confirm Password"
+            app:boxStrokeColor="@color/black"
+            app:cursorColor="@color/black"
+            app:hintTextColor="@color/black"
+            app:endIconMode="password_toggle"
+            app:layout_constraintBottom_toTopOf="@+id/btnCreateAccount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tilPassword"
+            app:layout_constraintVertical_bias="0.424">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <Button
             android:id="@+id/btnClose"
             android:layout_width="40dp"
@@ -139,35 +203,24 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="61dp"
                 android:inputType="textEmailAddress"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/requirementText1"
-            android:layout_width="257dp"
-            android:layout_height="22dp"
-            android:text="- 8 characters"
-            app:layout_constraintBottom_toTopOf="@+id/tilPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.793"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilEmail"
-            app:layout_constraintVertical_bias="0.126" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPassword"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="132dp"
+            android:layout_marginTop="160dp"
             android:hint="Password"
             app:boxStrokeColor="@color/black"
             app:cursorColor="@color/black"
             app:hintTextColor="@color/black"
+            app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilEmail">
 
@@ -184,32 +237,28 @@
             style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
             android:text="Create Account"
             android:textAllCaps="false"
             android:textColor="#FFFFFF"
             app:backgroundTint="#2563EB"
             app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilPassword"
             app:rippleColor="#33FFFFFF" />
 
-        <Button
-            android:id="@+id/req1Button"
-            android:layout_width="32dp"
-            android:layout_height="27dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:backgroundTint="@color/black"
-            android:contentDescription="Close"
-            android:drawableRight="@drawable/error_button_image"
-            android:padding="8dp"
+        <TextView
+            android:id="@+id/textReq1"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:text="- 8 Characters"
             app:layout_constraintBottom_toTopOf="@+id/tilPassword"
-            app:layout_constraintEnd_toStartOf="@+id/requirementText1"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilEmail"
-            app:layout_constraintVertical_bias="0.094" />
+            app:layout_constraintVertical_bias="0.08" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

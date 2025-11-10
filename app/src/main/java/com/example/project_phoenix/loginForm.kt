@@ -26,13 +26,17 @@ class loginForm : Fragment() {
 
     private var newUsername: TextInputEditText? = null
     private var etPassword: TextInputEditText? = null
+
+    private var etPassword2: TextInputEditText? = null
     private var createButton: MaterialButton? = null
 
     private var reqLengthButton: Button? = null
     private var reqUpperCaseButton: Button? = null
     private var reqSpecialButton: Button? = null
+    private var reqPasswordMatch: Button? = null
 
     private var passwordWatcher: TextWatcher? = null
+
 
 
 
@@ -42,10 +46,12 @@ class loginForm : Fragment() {
         passwordWatcher = null
 
         etPassword = null
+        etPassword2 = null
         createButton = null
         reqLengthButton = null
         reqUpperCaseButton = null
         reqSpecialButton = null
+        reqPasswordMatch = null
         newEmail = null
         newUsername = null
         super.onDestroyView()
@@ -63,11 +69,13 @@ class loginForm : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         etPassword = view.findViewById<TextInputEditText>(R.id.etPassword)
+        etPassword2 = view.findViewById<TextInputEditText>(R.id.etPassword2)
         createButton = view.findViewById<MaterialButton>(R.id.btnCreateAccount)
 
-        reqLengthButton = view.findViewById<Button>(R.id.req1Button)
-        reqUpperCaseButton = view.findViewById<Button>(R.id.req2Button)
-        reqSpecialButton = view.findViewById<Button>(R.id.req3Button)
+        reqLengthButton = view.findViewById<Button>(R.id.reqButton1)
+        reqSpecialButton = view.findViewById<Button>(R.id.reqButton2)
+        reqUpperCaseButton = view.findViewById<Button>(R.id.reqButton3)
+        reqPasswordMatch = view.findViewById<Button>(R.id.reqButton4)
 
         newEmail = view.findViewById<TextInputEditText>(R.id.etEmail)
         newUsername = view.findViewById<TextInputEditText>(R.id.etUsername)
@@ -99,7 +107,8 @@ class loginForm : Fragment() {
                 val hasUpper = pwd.any{it.isUpperCase()}
                 val hasSpecial = SPECIAL_REGEX.containsMatchIn(pwd)
 
-                //we call the function setButtonImage() to change the icons
+
+                //we call the function setButtonImage() to change the icons to green check mark
                 setButtonImage(reqLengthButton, hasLen)
                 setButtonImage(reqUpperCaseButton,hasUpper)
                 setButtonImage(reqSpecialButton,hasSpecial)
@@ -115,8 +124,12 @@ class loginForm : Fragment() {
             val email = newEmail?.text?.toString()?.trim().orEmpty()
             val username = newUsername?.text?.toString()?.trim().orEmpty()
             val password = etPassword?.text?.toString()?.trim().orEmpty()
+            val password2 = etPassword2?.text?.toString()?.trim().orEmpty()
 
-            if (email.isBlank() || username.isBlank() || password.length < 8) {
+            val match = password == password2
+            setButtonImage(reqPasswordMatch,match)
+
+            if (email.isBlank() || username.isBlank() || password.length < 8 || !match) {
                 toast("Please complete all fields (password 8+ chars).")
                 return@setOnClickListener
             }
@@ -135,12 +148,11 @@ class loginForm : Fragment() {
                         //this might be implemented later on when we need to verify emails
                         //user.sendEmailVerification()
 
-                        //creating the profile of a user
+                        //creating the profile of a user - not including password
                         val profile = mapOf(
                             "uid" to user.uid,
                             "email" to email,
                             "username" to username,
-                            "password" to password,
                             "createdAt" to Timestamp.now()
                         )
 
