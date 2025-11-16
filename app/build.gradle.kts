@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation("androidx.fragment:fragment:1.8.9")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
     implementation(libs.firebase.auth)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)

@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Project_PHOENIX"
         >
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -24,7 +24,7 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.app.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             />

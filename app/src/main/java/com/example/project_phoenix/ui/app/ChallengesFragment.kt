@@ -1,10 +1,11 @@
-package com.example.project_phoenix
+package com.example.project_phoenix.ui.app
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.project_phoenix.R
 
 class ChallengesFragment : Fragment() {
 

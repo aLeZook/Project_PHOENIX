@@ -1,27 +1,33 @@
-package com.example.project_phoenix
+package com.example.project_phoenix.ui.login
 
 import android.os.Bundle
 import android.text.Editable
-import androidx.fragment.app.Fragment
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.textfield.TextInputEditText
 import android.widget.Button
-import com.google.android.material.button.MaterialButton
-import android.text.TextWatcher
-import androidx.appcompat.content.res.AppCompatResources
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import com.google.firebase.firestore.FirebaseFirestore
 import android.widget.Toast
-
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.example.project_phoenix.R
+import com.example.project_phoenix.viewm.AuthUiState
+import com.example.project_phoenix.viewm.AuthViewModel
+import com.example.project_phoenix.viewm.AuthViewModelFactory
+import com.example.project_phoenix.data.firebaseRepo
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class loginForm : Fragment() {
 
+    //we create the viewmodel here again
+    private val vm: AuthViewModel by activityViewModels {
+        val repo = firebaseRepo(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
+        AuthViewModelFactory(repo)
+    }
     private var newEmail: TextInputEditText? = null
 
     private var newUsername: TextInputEditText? = null
@@ -133,53 +139,9 @@ class loginForm : Fragment() {
                 toast("Please complete all fields (password 8+ chars).")
                 return@setOnClickListener
             }
-
-            val auth = FirebaseAuth.getInstance()
-            val db = FirebaseFirestore.getInstance()
-
-
             //this will prevent double-taps
             setBusy(true)
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val user = auth.currentUser!!
-                        //this might be implemented later on when we need to verify emails
-                        //user.sendEmailVerification()
-
-                        //creating the profile of a user - not including password
-                        val profile = mapOf(
-                            "uid" to user.uid,
-                            "email" to email,
-                            "username" to username,
-                            "createdAt" to Timestamp.now()
-                        )
-
-                        db.collection("users").document(user.uid)
-                            .set(profile)
-                            .addOnSuccessListener {
-                                toast("Account created!")
-                                parentFragmentManager.popBackStack()
-                            }
-                            .addOnFailureListener { e ->
-                                toast("Profile save failed: ${e.localizedMessage}")
-                            }
-                            .addOnCompleteListener {
-                                setBusy(false)
-                            }
-                    } else {
-                        setBusy(false)
-                        val msg = when (val e = task.exception) {
-                            is FirebaseAuthWeakPasswordException -> "Password too weak."
-                            is FirebaseAuthUserCollisionException -> "Email already in use."
-                            is FirebaseAuthInvalidCredentialsException -> "Invalid email format."
-                            else -> e?.localizedMessage ?: "Sign up failed."
-                        }
-                        toast(msg)
-                    }
-                }
-
+            vm.signup(email, username, password)
         }
 
     }

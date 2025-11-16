@@ -1,15 +1,18 @@
-package com.example.project_phoenix
+package com.example.project_phoenix.ui.app
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.example.project_phoenix.R
+import com.example.project_phoenix.ui.app.StatsFragment
+import com.example.project_phoenix.ui.login.LoginActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import android.content.Intent
-import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
