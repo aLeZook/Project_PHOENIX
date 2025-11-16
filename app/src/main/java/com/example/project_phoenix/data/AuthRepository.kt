@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.google.firebase.auth.UserProfileChangeRequest
 
 
 //this class will hold our user properties
@@ -28,6 +29,10 @@ interface AuthRepository{
     suspend fun login(email: String, password: String): ResultAuth
     suspend fun signup(email: String, username: String, password: String): ResultAuth
     suspend fun passwordReset(email: String): ResultAuth
+
+    fun currentUserCached(): User?
+
+    suspend fun refreshCurrentUser(): User?
 }
 
 //this creates an instance of our database repository
@@ -45,8 +50,9 @@ class firebaseRepo(
                 //using auth which is a firebase instance
                 auth.signInWithEmailAndPassword(email, password).await()
                 // auth.currentUser? is checking if the current user is null, if it is then returns Error
-                val tUser = auth.currentUser ?: return@withContext ResultAuth.Error("No user")
-                ResultAuth.Success(User(tUser.uid, tUser.email ?: email, null))
+                val tUser = auth.currentUser ?: error("No user")
+                tUser.reload().await()
+                ResultAuth.Success(User(tUser.uid, tUser.email ?: email, tUser.displayName))
             }.getOrElse { t ->
                 //this will throw the message error
                 ResultAuth.Error(humanMessage(t))
@@ -58,7 +64,14 @@ class firebaseRepo(
         withContext(Dispatchers.IO) {
             runCatching {
                 auth.createUserWithEmailAndPassword(email, password).await()
-                val tUser = auth.currentUser ?: return@withContext ResultAuth.Error("No user")
+                val tUser = auth.currentUser ?: error("No user")
+
+                //this will change the display name of the user to their username
+                val req = UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+                    .build()
+                tUser.updateProfile(req).await()
+
                 //creates a map of the profile with the following properties
                 val profile = mapOf(
                     "uid" to tUser.uid,
@@ -89,6 +102,23 @@ class firebaseRepo(
                 ResultAuth.Error(humanMessage(t))
             }
         }
+    //this will try to get the current user
+    override fun currentUserCached(): User? {
+        val u = auth.currentUser ?: return null
+        return User(u.uid, u.email ?: "", u.displayName)
+    }
+
+
+    //this will be called when a refresh is needed
+    override suspend fun refreshCurrentUser(): User? = withContext(Dispatchers.IO) {
+        val u = auth.currentUser ?: return@withContext null
+        runCatching {
+            u.reload().await()
+            User(u.uid, u.email ?: "", u.displayName)
+        }.getOrNull()
+    }
+
+
 
     private fun humanMessage(t: Throwable): String = when (t) {
         is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> "Invalid email or password."

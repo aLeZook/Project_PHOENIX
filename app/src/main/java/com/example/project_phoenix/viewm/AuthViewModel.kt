@@ -26,6 +26,16 @@ class AuthViewModel(
     //state will be the read-only for UI
     val state: StateFlow<AuthUiState> = _state
 
+    //this will be called when a new View Model instance is needed
+    fun getFromAuthIfNeeded(){
+        if (_state.value is AuthUiState.Authed) return
+
+        //we update the state value to send back the username of the authed user
+        repo.currentUserCached()?.let { u ->
+            _state.value = AuthUiState.Authed(u)
+        }
+    }
+
     //this will be the function the UI calls when user presses log in
     fun login(email: String, password: String) {
         //this will set the state to loading which can show spinner/disable buttons in the UI
