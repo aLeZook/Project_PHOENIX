@@ -9,11 +9,22 @@
     card_view:cardCornerRadius="8dp"
     card_view:cardElevation="4dp">
 
-    <CheckBox
-        android:id="@+id/taskCheckbox"
+    <!-- Use a RelativeLayout to position the CheckBox -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Sample Task"
-        android:textSize="18sp"/>
+        android:padding="8dp">
+
+        <CheckBox
+            android:id="@+id/taskCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Sample Task"
+            android:textColorLink="@color/black"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
 </androidx.cardview.widget.CardView>
+

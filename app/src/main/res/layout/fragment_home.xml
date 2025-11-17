@@ -11,52 +11,53 @@
         android:id="@+id/topBar"
         android:layout_width="0dp"
         android:layout_height="64dp"
-        android:background="#1A237E"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="24dp"
+        android:background="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Level Circle -->
         <TextView
             android:id="@+id/levelCircle"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginStart="16dp"
             android:background="@drawable/circle_background"
             android:gravity="center"
             android:text="Lv 1"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="16dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Username -->
         <TextView
             android:id="@+id/usernameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
             android:text="Jonathan Qi"
-            android:textSize="18sp"
             android:textColor="@android:color/white"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/levelCircle"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="12dp" />
+            app:layout_constraintStart_toEndOf="@id/levelCircle"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Daily Title -->
         <TextView
             android:id="@+id/dailyTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="16dp"
             android:text="Daily Motivation"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="20dp" />
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Speech Bubble ABOVE Avatar -->
