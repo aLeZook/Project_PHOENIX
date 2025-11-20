@@ -11,17 +11,17 @@
         android:title="@string/title_challenges"
         android:icon="@drawable/challenges_nav"/>
     <item
-        android:id="@+id/bottom_stats"
-        android:title="@string/title_stats"
-        android:icon="@drawable/stats_chart"/>
+        android:id="@+id/bottom_calendar"
+        android:title="@string/title_calendar"
+        android:icon="@drawable/outline_calendar_today_24"/>
     <item
         android:id="@+id/bottom_add"
         android:title="@string/title_add"
         android:icon="@drawable/plus_sign_add_tasks"/>
     <item
-        android:id="@+id/bottom_calendar"
-        android:title="@string/title_calendar"
-        android:icon="@drawable/outline_calendar_today_24"/>
+        android:id="@+id/bottom_stats"
+        android:title="@string/title_stats"
+        android:icon="@drawable/stats_chart"/>
     <item
         android:id="@+id/bottom_settings"
         android:title="@string/title_settings"
