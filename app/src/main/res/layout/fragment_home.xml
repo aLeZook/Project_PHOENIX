@@ -6,7 +6,7 @@
     android:background="@drawable/gradient_background"
     tools:context=".ui.app.HomeFragment">
 
-    <!-- Top Bar -->
+    <!-- User profile bar pinned to the top -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topBar"
         android:layout_width="0dp"
@@ -60,42 +60,83 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Speech Bubble ABOVE Avatar -->
-    <TextView
+    <!-- Speech Bubble above centered avatar -->
+    <androidx.cardview.widget.CardView
         android:id="@+id/messageBubble"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/speech_bubble"
-        android:padding="16dp"
-        android:text="Offense is the best defense - Sun Tzu"
-        android:textColor="#333333"
-        android:textAlignment="center"
-        android:textSize="16sp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="10dp"
+        app:cardUseCompatPadding="true"
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintBottom_toTopOf="@id/assistantCard"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <!-- Assistant Image inside Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="18dp"
+            android:paddingVertical="16dp"
+            android:background="@drawable/speech_bubble">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quote of the Day"
+                android:textAllCaps="true"
+                android:textColor="#7C8CFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
+
+            <TextView
+                android:id="@+id/quoteText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Offense is the best defense."
+                android:textColor="#333333"
+                android:textSize="17sp"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingExtra="2dp"
+                android:letterSpacing="0.01" />
+
+            <TextView
+                android:id="@+id/quoteAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="— Sun Tzu"
+                android:textAlignment="viewEnd"
+                android:textColor="#555555"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Assistant Image centered in the screen -->
     <androidx.cardview.widget.CardView
         android:id="@+id/assistantCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="12dp"
         app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@id/messageBubble"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.45">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/assistantImage"
-            android:layout_width="250dp"
-            android:layout_height="500dp"
+            android:layout_width="220dp"
+            android:layout_height="320dp"
             android:src="@drawable/avatar"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent" />
