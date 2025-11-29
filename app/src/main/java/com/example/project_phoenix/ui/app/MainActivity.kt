@@ -11,6 +11,7 @@ import com.example.project_phoenix.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
@@ -33,23 +34,22 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.frame_container, HomeFragment()) // your middle fragment
                 .commit()
             //changes the selected icon at the bottom
-            bottomNavigationView.selectedItemId = R.id.bottom_add
+            bottomNavigationView.selectedItemId = R.id.bottom_completed
         }
 
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
-
             when (menuItem.itemId) {
                 R.id.bottom_home -> replaceFragment(HomeFragment())
                 R.id.bottom_settings -> replaceFragment(SettingsFragment())
-                R.id.bottom_add -> replaceFragment(HomeFragment())
+                R.id.bottom_completed -> replaceFragment(CompletedFragment())
                 R.id.bottom_calendar -> replaceFragment(CalendarFragment())
                 R.id.bottom_challenges -> replaceFragment(ChallengesFragment())
                 R.id.bottom_stats -> replaceFragment(StatsFragment())
-
             }
             true
         }
+
 
     }
     private fun replaceFragment(fragment: Fragment)

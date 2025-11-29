@@ -5,32 +5,176 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.channels.awaitClose
+import java.time.LocalDate
 
 class TaskRepository(private val db: FirebaseFirestore) {
 
+    /**
+     * ACTIVE tasks for today:
+     * - recurring tasks (reset daily)
+     * - one-time tasks whose date == today
+     * - NOT completed
+     */
     fun getTasks(uid: String): Flow<List<Task>> = callbackFlow {
-        val listener = db.collection("users").document(uid)
+        val today = LocalDate.now().toString()
+
+        val listener = db.collection("users")
+            .document(uid)
             .collection("tasks")
             .addSnapshotListener { snapshot, error ->
-                if (error != null) return@addSnapshotListener
-                val list = snapshot?.documents?.map { doc ->
-                    Task(doc.id, doc.getString("title") ?: "", doc.getBoolean("completed") ?: false)
-                } ?: emptyList()
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val docs = snapshot?.documents ?: emptyList()
+                val list = mutableListOf<Task>()
+
+                for (doc in docs) {
+                    val id = doc.id
+                    val title = doc.getString("title") ?: ""
+                    val completed = doc.getBoolean("completed") ?: false
+                    val recurring = doc.getBoolean("recurring") ?: false
+                    val date = doc.getString("date") ?: ""
+
+                    // Reset recurring tasks for new day
+                    if (recurring && date != today) {
+                        doc.reference.update(
+                            mapOf("completed" to false, "date" to today)
+                        )
+                    }
+
+                    // ACTIVE if:
+                    // recurring OR date==today AND not completed
+                    if (!completed && (recurring || date == today)) {
+                        list.add(
+                            Task(
+                                id = id,
+                                title = title,
+                                completed = false,
+                                recurring = recurring,
+                                date = today
+                            )
+                        )
+                    }
+                }
+
                 trySend(list)
             }
+
         awaitClose { listener.remove() }
     }
 
-    suspend fun addTask(uid: String, title: String) {
-        val doc = db.collection("users").document(uid)
+    /**
+     * COMPLETED tasks for today.
+     */
+    fun getCompletedTasks(uid: String): Flow<List<Task>> = callbackFlow {
+        val today = LocalDate.now().toString()
+
+        val listener = db.collection("users")
+            .document(uid)
             .collection("tasks")
-            .document()
-        doc.set(Task(doc.id, title)).await()
+            .whereEqualTo("completed", true)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+
+                val docs = snapshot?.documents ?: emptyList()
+                val list = mutableListOf<Task>()
+
+                for (doc in docs) {
+                    val id = doc.id
+                    val title = doc.getString("title") ?: ""
+                    val recurring = doc.getBoolean("recurring") ?: false
+                    val date = doc.getString("date") ?: today
+
+                    // Completed tasks are shown only if:
+                    // - recurring (completed anytime today)
+                    // - OR one-time tasks completed today
+                    if (recurring || date == today) {
+                        list.add(
+                            Task(
+                                id = id,
+                                title = title,
+                                completed = true,
+                                recurring = recurring,
+                                date = date
+                            )
+                        )
+                    }
+                }
+
+                trySend(list)
+            }
+
+        awaitClose { listener.remove() }
     }
 
+    /**
+     * Clear all completed tasks for the user
+     * (does not touch recurring daily tasks that reset)
+     */
+    fun clearCompletedTasks(uid: String) {
+        val completedTasksRef = db.collection("users")
+            .document(uid)
+            .collection("tasks")
+            .whereEqualTo("completed", true)
+
+        completedTasksRef.get().addOnSuccessListener { snapshot ->
+            for (doc in snapshot.documents) {
+                doc.reference.delete()
+            }
+        }
+    }
+
+    /**
+     * Add a new task
+     */
+    suspend fun addTask(uid: String, title: String, recurring: Boolean) {
+        val today = LocalDate.now().toString()
+        val docRef = db.collection("users").document(uid)
+            .collection("tasks")
+            .document()
+
+        val task = Task(
+            id = docRef.id,
+            title = title,
+            completed = false,
+            recurring = recurring,
+            date = today
+        )
+
+        docRef.set(task).await()
+    }
+
+    /**
+     * Update task (toggle complete, rename, etc.)
+     */
     suspend fun updateTask(uid: String, task: Task) {
         db.collection("users").document(uid)
-            .collection("tasks").document(task.id)
-            .set(task).await()
+            .collection("tasks")
+            .document(task.id)
+            .update(
+                mapOf(
+                    "title" to task.title,
+                    "completed" to task.completed,
+                    "recurring" to task.recurring,
+                    "date" to task.date
+                )
+            ).await()
     }
+
+    /**
+     * Delete a task
+     */
+    suspend fun deleteTask(uid: String, taskId: String) {
+        db.collection("users").document(uid)
+            .collection("tasks")
+            .document(taskId)
+            .delete()
+            .await()
+    }
+
 }

@@ -1,8 +1,9 @@
 package com.example.project_phoenix.data
 
 data class Task(
-    var id: String = "",
-    var title: String = "",
-    var completed: Boolean = false
+    val id: String = "",
+    val title: String = "",
+    var completed: Boolean = false,
+    val recurring: Boolean = false,
+    val date: String = "" // ISO date "yyyy-MM-dd"
 )
-
