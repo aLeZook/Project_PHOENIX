@@ -2,10 +2,14 @@ package com.example.project_phoenix.ui.app
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
+import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,24 +21,21 @@ import com.example.project_phoenix.viewm.TasksViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ChallengesFragment : Fragment() {
 
+    private lateinit var rootLayout: ConstraintLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var addTaskButton: MaterialButton
     private lateinit var adapter: TaskAdapter
     private val tasksList = mutableListOf<Task>()
 
-    // Firebase & Repository
-    private val db = FirebaseFirestore.getInstance()
-    private val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-    private val repository = TaskRepository(db)
-
-    // ViewModel
+    // Firebase & repo & viewmodel
+    private val db by lazy { FirebaseFirestore.getInstance() }
+    private val uid by lazy { FirebaseAuth.getInstance().currentUser?.uid ?: "" }
+    private val repository by lazy { TaskRepository(db) }
     private val viewModel by lazy { TasksViewModel(repository, uid) }
 
     override fun onCreateView(
@@ -42,28 +43,45 @@ class ChallengesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_challenges, container, false)
-
+        rootLayout = view.findViewById(R.id.root_layout)
         recyclerView = view.findViewById(R.id.tasksRecyclerView)
         addTaskButton = view.findViewById(R.id.addTaskButton)
 
-        // Ensure button is above system navigation bar
-        ViewCompat.setOnApplyWindowInsetsListener(addTaskButton) { v, insets ->
+        // ensure content sits above system bars
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(
-                v.paddingLeft,
-                v.paddingTop,
-                v.paddingRight,
-                systemBars.bottom + 16
-            )
+            v.setPadding(v.paddingLeft, v.paddingTop, v.paddingRight, systemBars.bottom + 8)
             insets
         }
 
-        // Setup RecyclerView
-        adapter = TaskAdapter(tasksList)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        // RecyclerView + adapter
+        adapter = TaskAdapter(tasksList,
+            onToggle = { task ->
+                // flip locally for instant UI feedback, viewModel will update Firestore
+                val idx = tasksList.indexOfFirst { it.id == task.id }
+                if (idx >= 0) {
+                    tasksList[idx].completed = !tasksList[idx].completed
+                    adapter.notifyItemChanged(idx)
+                }
+                viewModel.toggleTask(task.copy(completed = !task.completed))
+            },
+            onDelete = { task ->
+                // optional deletion flow - prompt then delete via viewModel
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Delete task?")
+                    .setMessage("Delete \"${task.title}\"?")
+                    .setPositiveButton("Delete") { _, _ ->
+                        lifecycleScope.launch { viewModel.deleteTask(task.id) }
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+            }
+        )
 
-        // Observe tasks from ViewModel
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        // collect tasks from viewmodel
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.tasks.collectLatest { list ->
                 tasksList.clear()
@@ -72,24 +90,58 @@ class ChallengesFragment : Fragment() {
             }
         }
 
-        // Add task button click
         addTaskButton.setOnClickListener { showAddTaskDialog() }
 
         return view
     }
 
     private fun showAddTaskDialog() {
-        val input = EditText(requireContext())
-        input.hint = "Enter task title"
+        // Programmatic dialog view: vertical LinearLayout with EditText + RadioGroup
+        val context = requireContext()
+        val container = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(24, 12, 24, 12)
+        }
 
-        AlertDialog.Builder(requireContext())
+        val titleInput = EditText(context).apply {
+            hint = "Task title"
+        }
+
+        val radioGroup = RadioGroup(context).apply {
+            orientation = RadioGroup.VERTICAL
+            val oneTime = RadioButton(context).apply {
+                id = View.generateViewId()
+                text = "One-time (show only on selected day)"
+            }
+            val recurring = RadioButton(context).apply {
+                id = View.generateViewId()
+                text = "Recurring (daily)"
+            }
+            addView(oneTime)
+            addView(recurring)
+            // default selection
+            oneTime.isChecked = true
+        }
+
+        // optional: you could add a DatePicker for one-time tasks to choose a date
+        container.addView(titleInput)
+        container.addView(radioGroup)
+
+        AlertDialog.Builder(context)
             .setTitle("Add Task")
-            .setView(input)
+            .setView(container)
             .setPositiveButton("Add") { _, _ ->
-                val title = input.text.toString()
-                if (title.isNotBlank()) viewModel.addTask(title)
+                val title = titleInput.text.toString().trim()
+                val isRecurring = (radioGroup.checkedRadioButtonId != -1)
+                        && (radioGroup.findViewById<RadioButton>(radioGroup.checkedRadioButtonId).text.toString().contains("Recurring"))
+                if (title.isNotBlank()) {
+                    viewModel.addTask(title, isRecurring)
+                } else {
+                    Toast.makeText(context, "Please enter a task title", Toast.LENGTH_SHORT).show()
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()
     }
 }
+
