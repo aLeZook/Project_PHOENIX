@@ -52,8 +52,14 @@ class ChallengesFragment : Fragment() {
             TaskClassificationRepository(model)
         }
     }
-    private val viewModel by lazy { TasksViewModel(repository, uid, levelRepository) }
-
+    private val viewModel by lazy {
+        TasksViewModel(
+            repo = repository,
+            uid = uid,
+            levelRepo = levelRepository,
+            classifier = classifier   // 👈 pass it in
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

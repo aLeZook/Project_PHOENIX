@@ -17,11 +17,31 @@ enum class TaskCategory(val label: String) {
                 normalized == categoryLabel || normalized.contains(categoryLabel)
             }
         }
-        private fun String.normalizeCategory(): String = this
-            .lowercase()
-            .replace("&", "and")
-            .replace(Regex("[^a-z\\s]"), " ")
-            .replace(Regex("\\s+"), " ")
-            .trim()
+
+        fun fromModelResponse(value: String?): TaskCategory? {
+            if (value.isNullOrBlank()) return null
+            val normalized = value.normalizeCategory()
+
+            return entries.firstOrNull { category -> category.matchesNormalized(normalized) }
+        }
+        }
+
+        fun matches(value: String?): Boolean {
+            if (value.isNullOrBlank()) return false
+            return matchesNormalized(value.normalizeCategory())
+        }
     }
+
+    private fun TaskCategory.matchesNormalized(normalized: String): Boolean {
+        val normalizedName = name.normalizeCategory()
+        val normalizedLabel = label.normalizeCategory()
+
+        return normalized == normalizedName || normalized == normalizedLabel ||
+                normalized.contains(normalizedName) || normalized.contains(normalizedLabel)
     }
+    private fun String.normalizeCategory(): String = this
+        .lowercase()
+        .replace("&", "and")
+        .replace(Regex("[^a-z\\s]"), " ")
+        .replace(Regex("\\s+"), " ")
+        .trim()
