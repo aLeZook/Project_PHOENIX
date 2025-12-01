@@ -14,6 +14,7 @@ import com.example.project_phoenix.data.TaskCategory
 import com.example.project_phoenix.data.TaskClassificationRepository
 import com.example.project_phoenix.data.LevelRepository
 import com.example.project_phoenix.data.POINTS_PER_TASK
+import java.util.Date
 
 class TasksViewModel(
     private val repo: TaskRepository,
@@ -40,11 +41,11 @@ class TasksViewModel(
         }
     }
 
-    fun addTask(title: String, recurring: Boolean) {
+    fun addTask(title: String, recurring: Boolean, dueDate: Date?) {
         viewModelScope.launch {
             val category = classifier?.runCatching { classify(title) }?.getOrElse { TaskCategory.PERSONAL_SELF_CARE }
                 ?: TaskCategory.PERSONAL_SELF_CARE
-            repo.addTask(uid, title, recurring, category)
+            repo.addTask(uid, title, recurring, category, dueDate)
         }
     }
 

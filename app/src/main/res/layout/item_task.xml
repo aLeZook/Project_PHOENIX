@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android.padding="12dp">
 
         <CheckBox
             android:id="@+id/taskCheckbox"
@@ -30,6 +30,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Category"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:alpha="0.8" />
+
+        <TextView
+            android:id="@+id/taskDueDateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Due Date"
             android:textSize="14sp"
             android:textColor="@color/black"
             android:alpha="0.8" />

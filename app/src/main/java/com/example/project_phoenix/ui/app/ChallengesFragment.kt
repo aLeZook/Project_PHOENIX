@@ -1,6 +1,7 @@
 package com.example.project_phoenix.ui.app
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -27,6 +28,8 @@ import kotlinx.coroutines.launch
 import com.example.project_phoenix.BuildConfig
 import com.example.project_phoenix.data.TaskClassificationRepository
 import com.google.ai.client.generativeai.GenerativeModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ChallengesFragment : Fragment() {
 
@@ -34,7 +37,7 @@ class ChallengesFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var addTaskButton: MaterialButton
     private lateinit var adapter: TaskAdapter
-    private val tasksList = mutableListOf<Task>()
+    private val displayableItems = mutableListOf<DisplayableItem>()
 
     // Firebase & repo & viewmodel
     private val db by lazy { FirebaseFirestore.getInstance() }
@@ -78,12 +81,12 @@ class ChallengesFragment : Fragment() {
         }
 
         // RecyclerView + adapter
-        adapter = TaskAdapter(tasksList,
+        adapter = TaskAdapter(displayableItems,
             onToggle = { task ->
-                // flip locally for instant UI feedback, viewModel will update Firestore
-                val idx = tasksList.indexOfFirst { it.id == task.id }
+                val idx = displayableItems.indexOfFirst { it is DisplayableItem.TaskItem && it.task.id == task.id }
                 if (idx >= 0) {
-                    tasksList[idx].completed = !tasksList[idx].completed
+                    val item = displayableItems[idx] as DisplayableItem.TaskItem
+                    item.task.completed = !item.task.completed
                     adapter.notifyItemChanged(idx)
                 }
                 viewModel.toggleTask(task.copy(completed = !task.completed))
@@ -106,9 +109,28 @@ class ChallengesFragment : Fragment() {
 
         // collect tasks from viewmodel
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.tasks.collectLatest { list ->
-                tasksList.clear()
-                tasksList.addAll(list)
+            viewModel.tasks.collectLatest { tasks ->
+                val today = Calendar.getInstance()
+                val todayTasks = mutableListOf<DisplayableItem.TaskItem>()
+                val futureTasks = mutableListOf<DisplayableItem.TaskItem>()
+
+                tasks.forEach { task ->
+                    if (task.recurring || (task.dueDate != null && isSameDay(task.dueDate, today.time))) {
+                        todayTasks.add(DisplayableItem.TaskItem(task))
+                    } else {
+                        futureTasks.add(DisplayableItem.TaskItem(task))
+                    }
+                }
+
+                displayableItems.clear()
+                if (todayTasks.isNotEmpty()) {
+                    displayableItems.add(DisplayableItem.Header("Today"))
+                    displayableItems.addAll(todayTasks)
+                }
+                if (futureTasks.isNotEmpty()) {
+                    displayableItems.add(DisplayableItem.Header("Future"))
+                    displayableItems.addAll(futureTasks)
+                }
                 adapter.notifyDataSetChanged()
             }
         }
@@ -118,8 +140,13 @@ class ChallengesFragment : Fragment() {
         return view
     }
 
+    private fun isSameDay(date1: Date, date2: Date): Boolean {
+        val sdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        return sdf.format(date1) == sdf.format(date2)
+    }
+
+
     private fun showAddTaskDialog() {
-        // Programmatic dialog view: vertical LinearLayout with EditText + RadioGroup
         val context = requireContext()
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -142,13 +169,32 @@ class ChallengesFragment : Fragment() {
             }
             addView(oneTime)
             addView(recurring)
-            // default selection
             oneTime.isChecked = true
         }
 
-        // optional: you could add a DatePicker for one-time tasks to choose a date
+        val calendar = Calendar.getInstance()
+        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        }
+
+        val selectDateButton = Button(context).apply {
+            text = "Select Date"
+            setOnClickListener {
+                DatePickerDialog(
+                    context,
+                    dateSetListener,
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
+        }
+
         container.addView(titleInput)
         container.addView(radioGroup)
+        container.addView(selectDateButton)
 
         AlertDialog.Builder(context)
             .setTitle("Add Task")
@@ -157,8 +203,10 @@ class ChallengesFragment : Fragment() {
                 val title = titleInput.text.toString().trim()
                 val isRecurring = (radioGroup.checkedRadioButtonId != -1)
                         && (radioGroup.findViewById<RadioButton>(radioGroup.checkedRadioButtonId).text.toString().contains("Recurring"))
+
                 if (title.isNotBlank()) {
-                    viewModel.addTask(title, isRecurring)
+                    val dueDate = if (isRecurring) null else calendar.time
+                    viewModel.addTask(title, isRecurring, dueDate)
                 } else {
                     Toast.makeText(context, "Please enter a task title", Toast.LENGTH_SHORT).show()
                 }
@@ -167,4 +215,3 @@ class ChallengesFragment : Fragment() {
             .show()
     }
 }
-
