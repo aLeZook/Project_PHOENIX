@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
 import com.example.project_phoenix.BuildConfig
 import com.example.project_phoenix.viewm.AffirmationUiState
 import com.example.project_phoenix.viewm.AffirmationViewModel
