@@ -45,6 +45,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var levelViewModel: LevelViewModel? = null
 
     private var lastLevel: Int? = null
+    private var isLevelUpPlaying: Boolean = false
     private lateinit var imageView: ImageView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,7 +59,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         imageView = view.findViewById(R.id.assistantImage)
         val messageBubble = view.findViewById<TextView>(R.id.messageBubble)
 
-        playIdleGif()
 
         vm.getFromAuthIfNeeded()
         viewLifecycleOwner.lifecycleScope.launch {
@@ -101,10 +101,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                         // Detect level up
                         val currentLevel = state.level
-                        if (lastLevel != null && currentLevel > lastLevel!!) {
-                            playLevelUpGif()
-                        }
                         lastLevel = currentLevel
+
+                        if (lastLevel != null && currentLevel > lastLevel!!) {
+                            playLevelUpGif(currentLevel)
+                        } else if (!isLevelUpPlaying) {
+                            playIdleGifForLevel(currentLevel)
+                        }
+
 
                         levelCircle.text = getString(R.string.level_abbrev, state.level)
                         pointsText.text = getString(R.string.points_display, state.points)
@@ -134,21 +138,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun playIdleGif() {
+    private fun idleDrawableForLevel(level: Int): Int {
+        return if (level > 1) R.drawable.sprite_idlel_2 else R.drawable.sprite_idle
+    }
+    private fun playIdleGifForLevel(level: Int) {
         Glide.with(this)
             .asGif()
-            .load(R.drawable.sprite_idle)
+            .load(idleDrawableForLevel(level))
             .into(imageView)
     }
 
-    private fun playIdleGif2() {
-        Glide.with(this)
-            .asGif()
-            .load(R.drawable.sprite_idlel_2)
-            .into(imageView)
-    }
 
-    private fun playLevelUpGif() {
+    private fun playLevelUpGif(newLevel: Int) {
+        isLevelUpPlaying = true
         Glide.with(this)
             .asGif()
             .load(R.drawable.sprite_levelup)
@@ -162,10 +164,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     val levelUpDurationMs = 3100L
 
                     Handler(Looper.getMainLooper()).postDelayed({
-                        playIdleGif2()
+                        isLevelUpPlaying = false
+                        playIdleGifForLevel(newLevel)
                     }, levelUpDurationMs)
                 }
             })
     }
-
 }

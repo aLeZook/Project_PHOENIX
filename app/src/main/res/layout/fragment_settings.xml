@@ -6,166 +6,239 @@
     android:background="@drawable/gradient_background"
     android:padding="16dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:showDividers="middle"
+        android:divider="@drawable/section_divider"
+        android:dividerPadding="12dp">
 
-        <TextView
-            android:id="@+id/accountHeader"
-            android:layout_width="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/accountCard"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Account"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="8dp"
+            app:cardUseCompatPadding="true"
+            app:strokeWidth="0dp">
 
-        <TextView
-            android:id="@+id/emailText"
-            android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+                <TextView
+                    android:id="@+id/avatarInitials"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/avatar_circle"
+                    android:gravity="center"
+                    android:text="P"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/usernameText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="Username"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    app:layout_constraintStart_toEndOf="@id/avatarInitials"
+                    app:layout_constraintTop_toTopOf="@id/avatarInitials"
+                    app:layout_constraintEnd_toEndOf="parent" />
+                <TextView
+                    android:id="@+id/emailText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="4dp"
+                    android:text="Email"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textColor="@color/gray_600"
+                    app:layout_constraintStart_toEndOf="@id/avatarInitials"
+                    app:layout_constraintTop_toBottomOf="@id/usernameText"
+                    app:layout_constraintEnd_toEndOf="parent" />
+                <TextView
+                    android:id="@+id/appVersionNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/pill_soft"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="6dp"
+                    android:text="v1.0.0"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textColor="@color/gray_700"
+                    app:layout_constraintTop_toBottomOf="@id/avatarInitials"
+                    app:layout_constraintStart_toStartOf="parent" />
+                <TextView
+                    android:id="@+id/accountSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Signed in"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                    android:textColor="@color/gray_700"
+                    app:layout_constraintBottom_toBottomOf="@id/appVersionNumber"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/preferencesCard"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email: "
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/accountHeader"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/passwordText"
-            android:layout_width="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="8dp"
+            app:cardUseCompatPadding="true"
+            app:strokeWidth="0dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:id="@+id/preferencesHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="App Preferences"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/soundText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sound"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/soundSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Haptic and in-app tones"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                            android:textColor="@color/gray_700" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/soundStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/pill_soft"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="On"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:textColor="@color/gray_700" />
+                    <Switch
+                        android:id="@+id/switchSound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/gray_100" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/notificationsText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Notifications"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/notificationsSubtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="Get the latest alerts"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                            android:textColor="@color/gray_700" />
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/notificationStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/pill_soft"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="6dp"
+                        android:text="Off"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                        android:textColor="@color/gray_700" />
+                    <Switch
+                        android:id="@+id/switchNotifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/privacyCard"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Password: "
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/emailText"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:cardCornerRadius="18dp"
+            app:cardElevation="8dp"
+            app:cardUseCompatPadding="true"
+            app:strokeWidth="0dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:id="@+id/privacyHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Privacy"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/privacyPolicyText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Privacy Policy"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:textColor="@color/gray_700" />
+                <TextView
+                    android:id="@+id/appVersionText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="App Version"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                    android:textColor="@color/gray_700" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/usernameText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Username: "
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/passwordText"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Button
-            android:id="@+id/editAcc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="EDIT ACCOUNT"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
-            android:backgroundTint="#D3D3D3"
-            android:textColor="#000000"
-            app:layout_constraintTop_toBottomOf="@id/usernameText"
-            app:layout_constraintStart_toStartOf="parent" />
-
-
-        <View
-            android:id="@+id/divider1"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="#DDDDDD"
-            app:layout_constraintTop_toBottomOf="@id/editAcc"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginVertical="12dp" />
-
-        <TextView
-            android:id="@+id/preferencesHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="App Preferences"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/divider1"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="12dp" />
-
-        <TextView
-            android:id="@+id/soundText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sound"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/preferencesHeader"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <Switch
-            android:id="@+id/switchSound"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBaseline_toBaselineOf="@id/soundText"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/notificationsText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Notifications"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/soundText"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="16dp" />
-
-        <Switch
-            android:id="@+id/switchNotifications"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBaseline_toBaselineOf="@id/notificationsText"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="#DDDDDD"
-            app:layout_constraintTop_toBottomOf="@id/notificationsText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginVertical="12dp" />
-
-        <TextView
-            android:id="@+id/privacyHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Privacy"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@id/divider2"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="12dp" />
-
-        <TextView
-            android:id="@+id/privacyPolicyText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Privacy Policy"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/privacyHeader"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/appVersionText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="App Version"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/privacyPolicyText"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="16dp" />
-
-        <TextView
-            android:id="@+id/appVersionNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1.0.0"
-            android:textSize="16sp"
-            android:textColor="#888888"
-            app:layout_constraintBaseline_toBaselineOf="@id/appVersionText"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </ScrollView>
