@@ -35,7 +35,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         Glide.with(this)
             .asGif()
-            .load(R.drawable.sprite_avatar)
+            .load(R.drawable.sprite_idle)
             .override(1000, 2000)
             .into(imageView)
 

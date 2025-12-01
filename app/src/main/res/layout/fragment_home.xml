@@ -71,6 +71,7 @@
         android:textColor="#333333"
         android:textAlignment="center"
         android:textSize="16sp"
+        android:fontFamily="cursive"
         app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,7 +79,20 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp" />
 
+
     <!-- Assistant Image -->
+
+    <View
+        android:id="@+id/pedestalRing"
+        android:layout_width="400dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="-40dp"
+        android:background="@drawable/pedestal_ring"
+        app:layout_constraintEnd_toEndOf="@id/assistantImage"
+        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintStart_toStartOf="@id/assistantImage"
+        app:layout_constraintTop_toBottomOf="@id/assistantImage" />
+
     <ImageView
         android:id="@+id/assistantImage"
         android:layout_width="match_parent"
@@ -91,6 +105,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.45"/>
+
 
 
 
