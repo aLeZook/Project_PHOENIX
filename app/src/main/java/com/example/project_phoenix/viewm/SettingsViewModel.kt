@@ -14,6 +14,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.example.project_phoenix.notifications.NotificationConstants
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.tasks.await
+import android.util.Log
 
 data class SettingsUiState(
     val soundEnabled: Boolean = true,
@@ -30,7 +34,8 @@ sealed class SettingsEvent {
 
 class SettingsViewModel(
     private val repository: SettingsRepository,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val messaging: FirebaseMessaging
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsUiState())
@@ -42,6 +47,7 @@ class SettingsViewModel(
     init {
         loadSettings()
         loadUser()
+        setMessagingAutoInit(_state.value.notificationsEnabled)
     }
 
     private fun loadSettings() {
@@ -74,6 +80,8 @@ class SettingsViewModel(
                 if (hasPermission) {
                     repository.setNotificationsEnabled(true)
                     _state.update { it.copy(notificationsEnabled = true) }
+                    setMessagingAutoInit(true)
+                    subscribeToPushTopic()
                     _events.emit(SettingsEvent.ShowNotificationEnabled)
                 } else {
                     _state.update { it.copy(notificationsEnabled = false) }
@@ -82,6 +90,12 @@ class SettingsViewModel(
             } else {
                 repository.setNotificationsEnabled(false)
                 _state.update { it.copy(notificationsEnabled = false) }
+                setMessagingAutoInit(false)
+                runCatching {
+                    messaging.unsubscribeFromTopic(NotificationConstants.GENERAL_TOPIC).await()
+                }.onFailure { throwable ->
+                    Log.w(TAG, "Failed to unsubscribe from topic", throwable)
+                }
             }
         }
     }
@@ -90,19 +104,38 @@ class SettingsViewModel(
         viewModelScope.launch {
             repository.setNotificationsEnabled(true)
             _state.update { it.copy(notificationsEnabled = true) }
+            setMessagingAutoInit(true)
+            subscribeToPushTopic()
             _events.emit(SettingsEvent.ShowNotificationEnabled)
         }
+    }
+
+    private suspend fun subscribeToPushTopic() {
+        runCatching {
+            messaging.subscribeToTopic(NotificationConstants.GENERAL_TOPIC).await()
+        }.onFailure { throwable ->
+            Log.w(TAG, "Failed to subscribe to topic", throwable)
+        }
+    }
+
+    private fun setMessagingAutoInit(enabled: Boolean) {
+        messaging.isAutoInitEnabled = enabled
+    }
+
+    companion object {
+        private const val TAG = "SettingsViewModel"
     }
 }
 
 class SettingsViewModelFactory(
     private val repository: SettingsRepository,
-    private val auth: FirebaseAuth
+    private val auth: FirebaseAuth,
+    private val messaging: FirebaseMessaging
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return SettingsViewModel(repository, auth) as T
+            return SettingsViewModel(repository, auth, messaging) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

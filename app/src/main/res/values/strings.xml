@@ -24,4 +24,10 @@
     <string name="settings_notifications_off">Alerts paused</string>
     <string name="settings_signed_in_label">Signed in as %1$s</string>
     <string name="settings_guest_label">Browsing as guest</string>
+    <string name="notification_channel_name">Project Phoenix Alerts</string>
+    <string name="notification_channel_description">Updates and reminders from Project Phoenix.</string>
+    <string name="push_notification_title">Project Phoenix</string>
+    <string name="push_notification_body">You have a new update.</string>
+    <string name="notification_enabled_title">Notifications enabled</string>
+    <string name="notification_enabled_body">Push notifications have been turned on.</string>
 </resources>

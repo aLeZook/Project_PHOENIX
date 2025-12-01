@@ -23,12 +23,14 @@
             app:cardCornerRadius="18dp"
             app:cardElevation="8dp"
             app:cardUseCompatPadding="true"
-            app:strokeWidth="0dp">
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/black">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:backgroundTint="@color/white">
                 <TextView
                     android:id="@+id/avatarInitials"
                     android:layout_width="48dp"
@@ -37,7 +39,7 @@
                     android:gravity="center"
                     android:text="P"
                     android:textAllCaps="true"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="Username"
+                    android:textColor="@color/white"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                     app:layout_constraintStart_toEndOf="@id/avatarInitials"
                     app:layout_constraintTop_toTopOf="@id/avatarInitials"
@@ -60,7 +63,7 @@
                     android:layout_marginTop="4dp"
                     android:text="Email"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:textColor="@color/gray_600"
+                    android:textColor="@color/white"
                     app:layout_constraintStart_toEndOf="@id/avatarInitials"
                     app:layout_constraintTop_toBottomOf="@id/usernameText"
                     app:layout_constraintEnd_toEndOf="parent" />
@@ -74,7 +77,7 @@
                     android:paddingVertical="6dp"
                     android:text="v1.0.0"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:textColor="@color/gray_700"
+                    android:textColor="@color/black"
                     app:layout_constraintTop_toBottomOf="@id/avatarInitials"
                     app:layout_constraintStart_toStartOf="parent" />
                 <TextView
@@ -83,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:text="Signed in"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                    android:textColor="@color/gray_700"
+                    android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="@id/appVersionNumber"
                     app:layout_constraintEnd_toEndOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -96,19 +99,22 @@
             app:cardCornerRadius="18dp"
             app:cardElevation="8dp"
             app:cardUseCompatPadding="true"
-            app:strokeWidth="0dp">
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/black">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:color="@color/black">
                 <TextView
                     android:id="@+id/preferencesHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="App Preferences"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/white"/>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -126,7 +132,8 @@
                             android:layout_height="wrap_content"
                             android:text="Sound"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/white"/>
                         <TextView
                             android:id="@+id/soundSubtitle"
                             android:layout_width="wrap_content"
@@ -134,7 +141,7 @@
                             android:layout_marginTop="2dp"
                             android:text="Haptic and in-app tones"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                            android:textColor="@color/gray_700" />
+                            android:textColor="@color/white" />
                     </LinearLayout>
                     <TextView
                         android:id="@+id/soundStatus"
@@ -146,11 +153,15 @@
                         android:paddingVertical="6dp"
                         android:text="On"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                        android:textColor="@color/gray_700" />
-                    <Switch
+                        android:textColor="@color/black" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchSound"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:focusedSearchResultHighlightColor="@color/white"
+                        app:useMaterialThemeColors="false"
+                        app:trackTint="@color/white"
+                        app:thumbTint="@color/black"/>
                 </LinearLayout>
                 <View
                     android:layout_width="match_parent"
@@ -173,7 +184,8 @@
                             android:layout_height="wrap_content"
                             android:text="Notifications"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/white"/>
                         <TextView
                             android:id="@+id/notificationsSubtitle"
                             android:layout_width="wrap_content"
@@ -181,7 +193,7 @@
                             android:layout_marginTop="2dp"
                             android:text="Get the latest alerts"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                            android:textColor="@color/gray_700" />
+                            android:textColor="@color/white" />
                     </LinearLayout>
                     <TextView
                         android:id="@+id/notificationStatus"
@@ -194,10 +206,14 @@
                         android:text="Off"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="@color/gray_700" />
-                    <Switch
+                    <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchNotifications"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        app:useMaterialThemeColors="false"
+                        app:trackTint="@color/white"
+                        app:thumbTint="@color/black"
+                        />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -208,7 +224,8 @@
             app:cardCornerRadius="18dp"
             app:cardElevation="8dp"
             app:cardUseCompatPadding="true"
-            app:strokeWidth="0dp">
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/black">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -220,7 +237,8 @@
                     android:layout_height="wrap_content"
                     android:text="Privacy"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/white"/>
                 <TextView
                     android:id="@+id/privacyPolicyText"
                     android:layout_width="wrap_content"
@@ -228,7 +246,7 @@
                     android:layout_marginTop="8dp"
                     android:text="Privacy Policy"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:textColor="@color/gray_700" />
+                    android:textColor="@color/white" />
                 <TextView
                     android:id="@+id/appVersionText"
                     android:layout_width="wrap_content"
@@ -236,7 +254,7 @@
                     android:layout_marginTop="12dp"
                     android:text="App Version"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:textColor="@color/gray_700" />
+                    android:textColor="@color/white" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

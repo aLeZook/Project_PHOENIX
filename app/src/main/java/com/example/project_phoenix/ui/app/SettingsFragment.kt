@@ -30,6 +30,10 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.example.project_phoenix.notifications.NotificationConstants
+import com.example.project_phoenix.notifications.NotificationHelper
+import com.google.firebase.messaging.FirebaseMessaging
+
 
 class SettingsFragment : Fragment() {
 
@@ -38,10 +42,13 @@ class SettingsFragment : Fragment() {
 
     private lateinit var soundSwitch: MaterialSwitch
     private lateinit var notificationsSwitch: MaterialSwitch
+    private lateinit var soundStatus: TextView
+    private lateinit var notificationStatus: TextView
     private val viewModel: SettingsViewModel by viewModels {
         SettingsViewModelFactory(
             SettingsRepository(requireContext().applicationContext),
-            FirebaseAuth.getInstance()
+            FirebaseAuth.getInstance(),
+            FirebaseMessaging.getInstance()
         )
     }
 
@@ -55,13 +62,15 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        createNotificationChannel()
+        NotificationHelper.ensureNotificationChannel(requireContext())
 
         val emailText = view.findViewById<TextView>(R.id.emailText)
         val usernameText = view.findViewById<TextView>(R.id.usernameText)
         val appVersionText = view.findViewById<TextView>(R.id.appVersionNumber)
         soundSwitch = view.findViewById(R.id.switchSound)
         notificationsSwitch = view.findViewById(R.id.switchNotifications)
+        soundStatus = view.findViewById(R.id.soundStatus)
+        notificationStatus = view.findViewById(R.id.notificationStatus)
 
         notificationsSwitch.setOnCheckedChangeListener { _, isChecked ->
             if (updatingUi) return@setOnCheckedChangeListener
@@ -79,6 +88,16 @@ class SettingsFragment : Fragment() {
                     updatingUi = true
                     notificationsSwitch.isChecked = state.notificationsEnabled
                     soundSwitch.isChecked = state.soundEnabled
+                    soundStatus.text = if (state.soundEnabled) {
+                        getString(R.string.settings_sound_on)
+                    } else {
+                        getString(R.string.settings_sound_off)
+                    }
+                    notificationStatus.text = if (state.notificationsEnabled) {
+                        getString(R.string.settings_notifications_on)
+                    } else {
+                        getString(R.string.settings_notifications_off)
+                    }
                     updatingUi = false
                     emailText.text = getString(R.string.email_label, state.email)
                     usernameText.text = getString(R.string.username_label, state.username)
@@ -96,21 +115,6 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    //Creates the notification
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "MyChannel"
-            val descriptionText = "Channel for app notifications"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("my_channel_id", name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                requireActivity().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -155,12 +159,13 @@ class SettingsFragment : Fragment() {
     private fun sendNotification() {
         if (!checkNotificationPermission()) return
 
-        val builder = NotificationCompat.Builder(requireContext(), "my_channel_id")
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
-            .setContentTitle("Notification")
-            .setContentText("Notifications Turned On!")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        NotificationHelper.ensureNotificationChannel(requireContext())
 
+        val builder = NotificationCompat.Builder(requireContext(), NotificationConstants.CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(getString(R.string.notification_enabled_title))
+            .setContentText(getString(R.string.notification_enabled_body))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         val notificationManager = NotificationManagerCompat.from(requireContext())
         notificationManager.notify(1001, builder.build())
     }
