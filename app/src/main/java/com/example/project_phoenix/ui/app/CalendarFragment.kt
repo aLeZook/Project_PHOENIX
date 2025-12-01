@@ -44,7 +44,26 @@ class CalendarFragment : Fragment() {
         selectedDateText = view.findViewById(R.id.selectedDateText)
         tasksRecyclerView = view.findViewById(R.id.calendar_tasks_recycler_view)
 
-        taskAdapter = TaskAdapter(mutableListOf(), { /* onToggle */ }, { /* onDelete */ })
+        taskAdapter = TaskAdapter(mutableListOf(), { task -> // onToggle
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            if (uid != null) {
+                lifecycleScope.launch {
+                    val updatedTask = task.copy(completed = !task.completed)
+                    taskRepository.updateTask(uid, updatedTask)
+                }
+            } else {
+                Toast.makeText(requireContext(), "You must be logged in to update tasks.", Toast.LENGTH_SHORT).show()
+            }
+        }, { task -> // onDelete
+            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            if (uid != null) {
+                lifecycleScope.launch {
+                    taskRepository.deleteTask(uid, task.id)
+                }
+            } else {
+                Toast.makeText(requireContext(), "You must be logged in to delete tasks.", Toast.LENGTH_SHORT).show()
+            }
+        })
         tasksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         tasksRecyclerView.adapter = taskAdapter
 
