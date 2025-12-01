@@ -14,4 +14,13 @@
         android:text="Completed Task"
         android:textSize="18sp"
         android:textColor="@android:color/black"/>
+    <TextView
+        android:id="@+id/completedTaskCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Category"
+        android:textSize="14sp"
+        android:textColor="@android:color/black"
+        android:alpha="0.8"/>
 </LinearLayout>

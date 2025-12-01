@@ -36,6 +36,9 @@ class TaskRepository(private val db: FirebaseFirestore) {
                     val completed = doc.getBoolean("completed") ?: false
                     val recurring = doc.getBoolean("recurring") ?: false
                     val date = doc.getString("date") ?: ""
+                    //this will add the category to each task
+                    val category = TaskCategory.fromLabel(doc.getString("category"))
+                        ?: TaskCategory.PERSONAL_SELF_CARE
 
                     // Reset recurring tasks for new day
                     if (recurring && date != today) {
@@ -53,7 +56,8 @@ class TaskRepository(private val db: FirebaseFirestore) {
                                 title = title,
                                 completed = false,
                                 recurring = recurring,
-                                date = today
+                                date = today,
+                                category = category
                             )
                         )
                     }
@@ -89,6 +93,8 @@ class TaskRepository(private val db: FirebaseFirestore) {
                     val title = doc.getString("title") ?: ""
                     val recurring = doc.getBoolean("recurring") ?: false
                     val date = doc.getString("date") ?: today
+                    val category = TaskCategory.fromLabel(doc.getString("category"))
+                        ?: TaskCategory.PERSONAL_SELF_CARE
 
                     // Completed tasks are shown only if:
                     // - recurring (completed anytime today)
@@ -100,7 +106,8 @@ class TaskRepository(private val db: FirebaseFirestore) {
                                 title = title,
                                 completed = true,
                                 recurring = recurring,
-                                date = date
+                                date = date,
+                                category = category
                             )
                         )
                     }
@@ -132,21 +139,22 @@ class TaskRepository(private val db: FirebaseFirestore) {
     /**
      * Add a new task
      */
-    suspend fun addTask(uid: String, title: String, recurring: Boolean) {
+    suspend fun addTask(uid: String, title: String, recurring: Boolean, category: TaskCategory) {
         val today = LocalDate.now().toString()
         val docRef = db.collection("users").document(uid)
             .collection("tasks")
             .document()
 
-        val task = Task(
-            id = docRef.id,
-            title = title,
-            completed = false,
-            recurring = recurring,
-            date = today
+        val data = mapOf(
+            "id" to docRef.id,
+            "title" to title,
+            "completed" to false,
+            "recurring" to recurring,
+            "date" to today,
+            "category" to category.label
         )
 
-        docRef.set(task).await()
+        docRef.set(data).await()
     }
 
     /**
@@ -161,7 +169,8 @@ class TaskRepository(private val db: FirebaseFirestore) {
                     "title" to task.title,
                     "completed" to task.completed,
                     "recurring" to task.recurring,
-                    "date" to task.date
+                    "date" to task.date,
+                    "category" to task.category.label
                 )
             ).await()
     }

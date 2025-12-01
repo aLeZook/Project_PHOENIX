@@ -21,6 +21,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+import com.example.project_phoenix.BuildConfig
+import com.example.project_phoenix.viewm.AffirmationUiState
+import com.example.project_phoenix.viewm.AffirmationViewModel
+import com.example.project_phoenix.viewm.AffirmationViewModelFactory
+import androidx.fragment.app.viewModels
+
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     //we use activityViewModels so we can keep the vm without refreshing from other fragments
@@ -28,10 +34,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val repo = firebaseRepo(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
         AuthViewModelFactory(repo)
     }
+    private val affirmationVm: AffirmationViewModel by viewModels {
+        AffirmationViewModelFactory(BuildConfig.GEMINI_API_KEY, requireContext().applicationContext)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val userShown = view.findViewById<TextView>(R.id.usernameText)
         val imageView = view.findViewById<ImageView>(R.id.assistantImage)
+        val messageBubble = view.findViewById<TextView>(R.id.messageBubble)
 
         Glide.with(this)
             .asGif()
@@ -62,6 +72,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                             Toast.makeText(requireContext(), s.message, Toast.LENGTH_SHORT).show()
                         }
                         is AuthUiState.Idle, is AuthUiState.Info -> Unit
+                    }
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                affirmationVm.state.collectLatest { state ->
+                    when (state) {
+                        AffirmationUiState.Loading, AffirmationUiState.Idle -> messageBubble.text =
+                            getString(R.string.loading_affirmation)
+
+                        is AffirmationUiState.Success -> messageBubble.text = state.affirmation
+                        is AffirmationUiState.Error -> messageBubble.text = state.message
                     }
                 }
             }

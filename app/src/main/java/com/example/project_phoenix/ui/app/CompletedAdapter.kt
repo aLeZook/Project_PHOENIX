@@ -31,8 +31,10 @@ class CompletedAdapter : RecyclerView.Adapter<CompletedAdapter.CompletedViewHold
 
     inner class CompletedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val titleText: TextView = itemView.findViewById(R.id.completedTaskTitle)
+        private val categoryText: TextView = itemView.findViewById(R.id.completedTaskCategory)
         fun bind(task: Task) {
             titleText.text = task.title
+            categoryText.text = task.category.label
         }
     }
 

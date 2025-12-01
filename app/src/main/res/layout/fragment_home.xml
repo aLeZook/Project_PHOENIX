@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/speech_bubble"
         android:padding="16dp"
-        android:text="Offense is the best defense - Sun Tzu"
+        android:text="@string/loading_affirmation"
         android:textColor="#333333"
         android:textAlignment="center"
         android:textSize="16sp"

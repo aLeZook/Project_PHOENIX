@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.project_phoenix.R
 import com.example.project_phoenix.data.Task
@@ -16,6 +17,7 @@ class TaskAdapter(
 
     class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val checkbox: CheckBox = view.findViewById(R.id.taskCheckbox)
+        val categoryLabel: TextView = view.findViewById(R.id.taskCategoryLabel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
@@ -28,6 +30,7 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
         holder.checkbox.text = task.title + if (task.recurring) " (daily)" else ""
+        holder.categoryLabel.text = task.category.label
         // avoid triggering listener during recycling
         holder.checkbox.setOnCheckedChangeListener(null)
         holder.checkbox.isChecked = task.completed

@@ -10,10 +10,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import com.example.project_phoenix.data.TaskCategory
+import com.example.project_phoenix.data.TaskClassificationRepository
 
 class TasksViewModel(
     private val repo: TaskRepository,
-    private val uid: String
+    private val uid: String,
+    private val classifier: TaskClassificationRepository? = null
 ) : ViewModel() {
 
     // ACTIVE Tasks (not completed)
@@ -36,7 +39,9 @@ class TasksViewModel(
 
     fun addTask(title: String, recurring: Boolean) {
         viewModelScope.launch {
-            repo.addTask(uid, title, recurring)
+            val category = classifier?.runCatching { classify(title) }?.getOrElse { TaskCategory.PERSONAL_SELF_CARE }
+                ?: TaskCategory.PERSONAL_SELF_CARE
+            repo.addTask(uid, title, recurring, category)
         }
     }
 

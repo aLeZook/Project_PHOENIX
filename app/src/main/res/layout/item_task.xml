@@ -23,6 +23,15 @@
             android:text="Sample Task"
             android:textColorLink="@color/black"
             android:textSize="18sp" />
+        <TextView
+            android:id="@+id/taskCategoryLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Category"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:alpha="0.8" />
 
     </RelativeLayout>
 

@@ -8,5 +8,6 @@
     <string name="title_home">Home</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="Completed" />
+    <string name="Completed"></string>
+    <string name="loading_affirmation">Fetching today\'s affirmation...</string>
 </resources>
