@@ -17,10 +17,33 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.project_phoenix.R
+import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.project_phoenix.data.SettingsRepository
+import com.example.project_phoenix.viewm.SettingsEvent
+import com.example.project_phoenix.viewm.SettingsViewModel
+import com.example.project_phoenix.viewm.SettingsViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import com.google.android.material.materialswitch.MaterialSwitch
 
 class SettingsFragment : Fragment() {
 
     private val REQUEST_CODE_POST_NOTIFICATIONS = 101
+    private var updatingUi = false
+
+    private lateinit var soundSwitch: MaterialSwitch
+    private lateinit var notificationsSwitch: MaterialSwitch
+    private val viewModel: SettingsViewModel by viewModels {
+        SettingsViewModelFactory(
+            SettingsRepository(requireContext().applicationContext),
+            FirebaseAuth.getInstance()
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,13 +57,43 @@ class SettingsFragment : Fragment() {
 
         createNotificationChannel()
 
-        val switchNotify = view.findViewById<Switch>(R.id.switchNotifications)
-        switchNotify.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                if (checkNotificationPermission()) {
-                    sendNotification()
-                } else {
-                    requestNotificationPermission()
+        val emailText = view.findViewById<TextView>(R.id.emailText)
+        val usernameText = view.findViewById<TextView>(R.id.usernameText)
+        val appVersionText = view.findViewById<TextView>(R.id.appVersionNumber)
+        soundSwitch = view.findViewById(R.id.switchSound)
+        notificationsSwitch = view.findViewById(R.id.switchNotifications)
+
+        notificationsSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (updatingUi) return@setOnCheckedChangeListener
+            viewModel.onNotificationsToggleRequested(isChecked, checkNotificationPermission())
+        }
+
+        soundSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (updatingUi) return@setOnCheckedChangeListener
+            viewModel.onSoundToggled(isChecked)
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collectLatest { state ->
+                    updatingUi = true
+                    notificationsSwitch.isChecked = state.notificationsEnabled
+                    soundSwitch.isChecked = state.soundEnabled
+                    updatingUi = false
+                    emailText.text = getString(R.string.email_label, state.email)
+                    usernameText.text = getString(R.string.username_label, state.username)
+                    appVersionText.text = state.appVersion
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.events.collectLatest { event ->
+                    when (event) {
+                        SettingsEvent.RequestNotificationPermission -> requestNotificationPermission()
+                        SettingsEvent.ShowNotificationEnabled -> sendNotification()
+                    }
                 }
             }
         }
@@ -93,26 +146,22 @@ class SettingsFragment : Fragment() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sendNotification()
+                viewModel.onNotificationPermissionGranted()
             }
         }
     }
 
     //Sends notification
     private fun sendNotification() {
-        if (!checkNotificationPermission()) return // ensure permission
+        if (!checkNotificationPermission()) return
 
-        try {
-            val builder = NotificationCompat.Builder(requireContext(), "my_channel_id")
-                .setSmallIcon(android.R.drawable.ic_dialog_info) // system icon
-                .setContentTitle("Notification")
-                .setContentText("Notifications Turned On!")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        val builder = NotificationCompat.Builder(requireContext(), "my_channel_id")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setContentTitle("Notification")
+            .setContentText("Notifications Turned On!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
-            val notificationManager = NotificationManagerCompat.from(requireContext())
-            notificationManager.notify(1001, builder.build())
-        } catch (e: SecurityException) {
-            e.printStackTrace() // handle denied permission gracefully
-        }
+        val notificationManager = NotificationManagerCompat.from(requireContext())
+        notificationManager.notify(1001, builder.build())
     }
 }

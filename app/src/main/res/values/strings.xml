@@ -16,4 +16,12 @@
     <string name="level_unknown">Level unavailable</string>
     <string name="points_unknown">Points unavailable</string>
     <string name="login_to_view_stats">Log in to view your progress</string>
+    <string name="email_label">Email: %1$s</string>
+    <string name="username_label">Username: %1$s</string>
+    <string name="settings_sound_on">Sound on</string>
+    <string name="settings_sound_off">Sound muted</string>
+    <string name="settings_notifications_on">Alerts enabled</string>
+    <string name="settings_notifications_off">Alerts paused</string>
+    <string name="settings_signed_in_label">Signed in as %1$s</string>
+    <string name="settings_guest_label">Browsing as guest</string>
 </resources>
