@@ -46,7 +46,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // Creates the notification
+    //Creates the notification
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "MyChannel"
@@ -61,7 +61,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // Is notification permission granted (should be yes)
+    //Is notification permission granted (should be yes)
     private fun checkNotificationPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
@@ -73,7 +73,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // Asks for notification permission
+    //Asks for notification permission
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ActivityCompat.requestPermissions(
@@ -84,7 +84,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // Check's user answer on "permission for notifications"
+    //Check's user answer on "permission for notifications"
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -98,7 +98,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    // Sends notification
+    //Sends notification
     private fun sendNotification() {
         if (!checkNotificationPermission()) return // ensure permission
 

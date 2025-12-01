@@ -58,10 +58,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         imageView = view.findViewById(R.id.assistantImage)
         val messageBubble = view.findViewById<TextView>(R.id.messageBubble)
 
-        // Start with idle GIF
         playIdleGif()
 
-        // Auth state
         vm.getFromAuthIfNeeded()
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -123,7 +121,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         }
 
-        // Affirmation state
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 affirmationVm.state.collectLatest { state ->
@@ -137,7 +134,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    // --- GIF Handling ---
     private fun playIdleGif() {
         Glide.with(this)
             .asGif()
