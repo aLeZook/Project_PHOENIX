@@ -10,10 +10,11 @@
     card_view:cardElevation="4dp">
 
     <!-- Use a RelativeLayout to position the CheckBox -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:orientation="vertical"
+        android:padding="12dp">
 
         <CheckBox
             android:id="@+id/taskCheckbox"
@@ -33,7 +34,7 @@
             android:textColor="@color/black"
             android:alpha="0.8" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
 

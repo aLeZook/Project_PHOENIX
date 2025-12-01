@@ -6,8 +6,7 @@
     <string name="title_calendar">Calendar</string>
     <string name="title_settings">Settings</string>
     <string name="title_home">Home</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="Completed"></string>
+    <string name="Completed">Completed</string>
     <string name="loading_affirmation">Fetching today\'s affirmation...</string>
 </resources>

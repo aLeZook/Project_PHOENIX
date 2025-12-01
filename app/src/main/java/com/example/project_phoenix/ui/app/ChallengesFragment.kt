@@ -23,6 +23,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.example.project_phoenix.BuildConfig
+import com.example.project_phoenix.data.TaskClassificationRepository
+import com.google.ai.client.generativeai.GenerativeModel
 
 class ChallengesFragment : Fragment() {
 
@@ -36,7 +39,18 @@ class ChallengesFragment : Fragment() {
     private val db by lazy { FirebaseFirestore.getInstance() }
     private val uid by lazy { FirebaseAuth.getInstance().currentUser?.uid ?: "" }
     private val repository by lazy { TaskRepository(db) }
-    private val viewModel by lazy { TasksViewModel(repository, uid) }
+    //private val viewModel by lazy { TasksViewModel(repository, uid) }
+
+    private val classifier by lazy {
+        BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() }?.let { key ->
+            val model = GenerativeModel(
+                modelName = "gemini-2.5-flash-lite",
+                apiKey = key
+            )
+            TaskClassificationRepository(model)
+        }
+    }
+    private val viewModel by lazy { TasksViewModel(repository, uid, classifier) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
