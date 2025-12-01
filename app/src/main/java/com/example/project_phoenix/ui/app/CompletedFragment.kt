@@ -21,6 +21,7 @@ class CompletedFragment : Fragment() {
     private lateinit var completedRecyclerView: RecyclerView
     private lateinit var completedTitle: TextView
     private lateinit var clearCompletedButton: MaterialButton
+    private lateinit var completedTaskCounter: TextView
     private lateinit var adapter: CompletedAdapter
     private lateinit var taskRepository: TaskRepository
 
@@ -33,6 +34,7 @@ class CompletedFragment : Fragment() {
         completedTitle = view.findViewById(R.id.completedTitle)
         completedRecyclerView = view.findViewById(R.id.completedRecyclerView)
         clearCompletedButton = view.findViewById(R.id.clearCompletedButton)
+        completedTaskCounter = view.findViewById(R.id.completed_task_counter)
 
         completedTitle.text = "Completed Tasks"
 
@@ -55,6 +57,7 @@ class CompletedFragment : Fragment() {
         lifecycleScope.launch {
             taskRepository.getCompletedTasks(uid).collect { tasks ->
                 adapter.submitList(tasks)
+                completedTaskCounter.text = "(${tasks.size})"
             }
         }
     }
@@ -65,6 +68,7 @@ class CompletedFragment : Fragment() {
         taskRepository.clearCompletedTasks(uid)
         // Clear the RecyclerView immediately
         adapter.submitList(emptyList())
+        completedTaskCounter.text = "(0)"
     }
 
 }

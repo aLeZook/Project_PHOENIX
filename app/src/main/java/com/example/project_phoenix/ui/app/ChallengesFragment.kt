@@ -140,12 +140,6 @@ class ChallengesFragment : Fragment() {
         return view
     }
 
-    private fun isSameDay(date1: Date, date2: Date): Boolean {
-        val sdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-        return sdf.format(date1) == sdf.format(date2)
-    }
-
-
     private fun showAddTaskDialog() {
         val context = requireContext()
         val container = LinearLayout(context).apply {

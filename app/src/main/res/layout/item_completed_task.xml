@@ -11,7 +11,7 @@
         android:id="@+id/completedTaskTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android.text="Completed Task"
+        android:text="Completed Task"
         android:textSize="18sp"
         android:textColor="@android:color/black"/>
     <TextView

@@ -8,49 +8,105 @@ import android.widget.CalendarView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.project_phoenix.R
+import com.example.project_phoenix.data.Task
+import com.example.project_phoenix.data.TaskRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.*
 
 class CalendarFragment : Fragment() {
 
-    // Declare your views here to access them later
     private lateinit var calendarView: CalendarView
     private lateinit var selectedDateText: TextView
+    private lateinit var tasksRecyclerView: RecyclerView
+    private lateinit var taskAdapter: TaskAdapter
+    private val taskRepository = TaskRepository(FirebaseFirestore.getInstance())
+    private val allTasks = mutableListOf<Task>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
-    // onViewCreated is the best place to find views and set listeners
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. Find the views by their ID
         calendarView = view.findViewById(R.id.calendarView)
         selectedDateText = view.findViewById(R.id.selectedDateText)
+        tasksRecyclerView = view.findViewById(R.id.calendar_tasks_recycler_view)
 
-        // Optional: Set an initial text
+        taskAdapter = TaskAdapter(mutableListOf(), { /* onToggle */ }, { /* onDelete */ })
+        tasksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        tasksRecyclerView.adapter = taskAdapter
+
         val sdf = SimpleDateFormat("MM/dd/yyyy", Locale.US)
-        val initialDate = sdf.format(calendarView.date) // Get today's date from the calendar
+        val initialDate = sdf.format(calendarView.date)
         selectedDateText.text = "Selected Date: $initialDate"
 
+        loadAllTasks()
 
-        // 2. Set a listener to handle date changes
-        calendarView.setOnDateChangeListener { calView, year, month, dayOfMonth ->
-            // Note: month is 0-indexed (0 for January, 11 for December)
-            val correctMonth = month + 1
-            val dateString = "$correctMonth/$dayOfMonth/$year"
-
-            // Update the TextView with the selected date
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            val calendar = Calendar.getInstance().apply {
+                set(year, month, dayOfMonth)
+            }
+            val selectedDate = calendar.time
+            val dateString = sdf.format(selectedDate)
             selectedDateText.text = "Selected Date: $dateString"
-
-            // You can also show a Toast message or perform any other action
-            Toast.makeText(requireContext(), "Selected: $dateString", Toast.LENGTH_SHORT).show()
+            filterTasksByDate(selectedDate)
         }
     }
+
+    private fun loadAllTasks() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        lifecycleScope.launch {
+            val activeTasksFlow = taskRepository.getTasks(uid)
+            val completedTasksFlow = taskRepository.getCompletedTasks(uid)
+
+            activeTasksFlow.combine(completedTasksFlow) { active, completed ->
+                allTasks.clear()
+                allTasks.addAll(active)
+                allTasks.addAll(completed)
+                // Initially filter for the current date
+                filterTasksByDate(Date(calendarView.date))
+            }.collect {}
+        }
+    }
+
+    private fun filterTasksByDate(selectedDate: Date) {
+        val filteredTasks = allTasks.filter {
+            it.dueDate != null && isSameDay(it.dueDate, selectedDate)
+        }
+
+        val notCompletedTasks = filteredTasks.filter { !it.completed }.map { DisplayableItem.TaskItem(it) }
+        val completedTasks = filteredTasks.filter { it.completed }.map { DisplayableItem.TaskItem(it) }
+
+        val displayableItems = mutableListOf<DisplayableItem>()
+        if (notCompletedTasks.isNotEmpty()) {
+            displayableItems.add(DisplayableItem.Header("Not Completed"))
+            displayableItems.addAll(notCompletedTasks)
+        }
+
+        if (completedTasks.isNotEmpty()) {
+            displayableItems.add(DisplayableItem.Header("Completed"))
+            displayableItems.addAll(completedTasks)
+        }
+
+        taskAdapter.items.clear()
+        taskAdapter.items.addAll(displayableItems)
+        taskAdapter.notifyDataSetChanged()
+    }
+}
+
+fun isSameDay(date1: Date, date2: Date): Boolean {
+    val sdf = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+    return sdf.format(date1) == sdf.format(date2)
 }

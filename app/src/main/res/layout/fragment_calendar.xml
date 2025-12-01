@@ -29,4 +29,16 @@
         android:textStyle="bold"
         tools:text="Selected Date: 11/18/2025" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/calendar_tasks_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintTop_toBottomOf="@id/selectedDateText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
