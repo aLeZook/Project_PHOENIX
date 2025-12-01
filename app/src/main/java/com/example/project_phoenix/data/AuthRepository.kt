@@ -77,7 +77,9 @@ class firebaseRepo(
                     "uid" to tUser.uid,
                     "email" to (tUser.email ?: email),
                     "username" to username,
-                    "createdAt" to Timestamp.now()
+                    "createdAt" to Timestamp.now(),
+                    "points" to 0,
+                    "level" to 1
                 )
                 //adds the users profile to the database
                 db.collection("users").document(tUser.uid).set(profile).await()

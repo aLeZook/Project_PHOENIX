@@ -12,10 +12,13 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.example.project_phoenix.data.TaskCategory
 import com.example.project_phoenix.data.TaskClassificationRepository
+import com.example.project_phoenix.data.LevelRepository
+import com.example.project_phoenix.data.POINTS_PER_TASK
 
 class TasksViewModel(
     private val repo: TaskRepository,
     private val uid: String,
+    private val levelRepo: LevelRepository? = null,
     private val classifier: TaskClassificationRepository? = null
 ) : ViewModel() {
 
@@ -47,7 +50,19 @@ class TasksViewModel(
 
     fun toggleTask(task: Task) {
         viewModelScope.launch {
-            val updated = task.copy(completed = !task.completed)
+            val updatedCompletion = !task.completed
+            val updated = task.copy(completed = updatedCompletion)
+            repo.updateTask(uid, updated)
+
+            val deltaPoints = when {
+                !task.completed && updatedCompletion -> POINTS_PER_TASK
+                task.completed && !updatedCompletion -> -POINTS_PER_TASK
+                else -> 0
+            }
+
+            if (deltaPoints != 0) {
+                levelRepo?.applyPointDelta(uid, deltaPoints)
+            }
             repo.updateTask(uid, updated)
         }
     }

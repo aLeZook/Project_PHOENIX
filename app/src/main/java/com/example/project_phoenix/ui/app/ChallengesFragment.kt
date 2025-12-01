@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.project_phoenix.R
 import com.example.project_phoenix.data.Task
 import com.example.project_phoenix.data.TaskRepository
+import com.example.project_phoenix.data.LevelRepository
 import com.example.project_phoenix.viewm.TasksViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
@@ -39,7 +40,8 @@ class ChallengesFragment : Fragment() {
     private val db by lazy { FirebaseFirestore.getInstance() }
     private val uid by lazy { FirebaseAuth.getInstance().currentUser?.uid ?: "" }
     private val repository by lazy { TaskRepository(db) }
-    //private val viewModel by lazy { TasksViewModel(repository, uid) }
+    private val levelRepository by lazy { LevelRepository(db) }
+
 
     private val classifier by lazy {
         BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() }?.let { key ->
@@ -50,7 +52,8 @@ class ChallengesFragment : Fragment() {
             TaskClassificationRepository(model)
         }
     }
-    private val viewModel by lazy { TasksViewModel(repository, uid, classifier) }
+    private val viewModel by lazy { TasksViewModel(repository, uid, levelRepository) }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

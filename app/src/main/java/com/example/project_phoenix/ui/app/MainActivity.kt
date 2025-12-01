@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.frame_container, HomeFragment()) // your middle fragment
                 .commit()
             //changes the selected icon at the bottom
-            bottomNavigationView.selectedItemId = R.id.bottom_completed
+            bottomNavigationView.selectedItemId = R.id.bottom_home
         }
 
 
@@ -45,7 +45,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.bottom_completed -> replaceFragment(CompletedFragment())
                 R.id.bottom_calendar -> replaceFragment(CalendarFragment())
                 R.id.bottom_challenges -> replaceFragment(ChallengesFragment())
-                R.id.bottom_stats -> replaceFragment(StatsFragment())
             }
             true
         }
