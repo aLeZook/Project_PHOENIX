@@ -101,9 +101,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                         // Detect level up
                         val currentLevel = state.level
+                        val previousLevel = lastLevel
                         lastLevel = currentLevel
 
-                        if (lastLevel != null && currentLevel > lastLevel!!) {
+                        if (previousLevel != null && currentLevel > previousLevel) {
                             playLevelUpGif(currentLevel)
                         } else if (!isLevelUpPlaying) {
                             playIdleGifForLevel(currentLevel)

@@ -1,6 +1,7 @@
 package com.example.project_phoenix.ui.app
 
 import android.Manifest
+import android.media.RingtoneManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -33,12 +34,24 @@ import com.google.android.material.materialswitch.MaterialSwitch
 import com.example.project_phoenix.notifications.NotificationConstants
 import com.example.project_phoenix.notifications.NotificationHelper
 import com.google.firebase.messaging.FirebaseMessaging
+import androidx.activity.result.contract.ActivityResultContracts
 
 
 class SettingsFragment : Fragment() {
 
-    private val REQUEST_CODE_POST_NOTIFICATIONS = 101
+
     private var updatingUi = false
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                viewModel.onNotificationPermissionGranted()
+            } else {
+                updatingUi = true
+                notificationsSwitch.isChecked = false
+                updatingUi = false
+                viewModel.onNotificationsToggleRequested(false, false)
+            }
+        }
 
     private lateinit var soundSwitch: MaterialSwitch
     private lateinit var notificationsSwitch: MaterialSwitch
@@ -102,6 +115,13 @@ class SettingsFragment : Fragment() {
                     emailText.text = getString(R.string.email_label, state.email)
                     usernameText.text = getString(R.string.username_label, state.username)
                     appVersionText.text = state.appVersion
+                    if (state.notificationsEnabled && !checkNotificationPermission()) {
+                        updatingUi = true
+                        notificationsSwitch.isChecked = false
+                        updatingUi = false
+                        viewModel.onNotificationsToggleRequested(false, false)
+                        requestNotificationPermission()
+                    }
                 }
             }
         }
@@ -110,7 +130,12 @@ class SettingsFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
-                        SettingsEvent.RequestNotificationPermission -> requestNotificationPermission()
+                        SettingsEvent.RequestNotificationPermission -> {
+                            updatingUi = true
+                            notificationsSwitch.isChecked = false
+                            updatingUi = false
+                            requestNotificationPermission()
+                        }
                         SettingsEvent.ShowNotificationEnabled -> sendNotification()
                     }
                 }
@@ -133,25 +158,7 @@ class SettingsFragment : Fragment() {
     //Asks for notification permission
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                REQUEST_CODE_POST_NOTIFICATIONS
-            )
-        }
-    }
-
-    //Check's user answer on "permission for notifications"
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_POST_NOTIFICATIONS) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                viewModel.onNotificationPermissionGranted()
-            }
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
@@ -166,6 +173,7 @@ class SettingsFragment : Fragment() {
             .setContentTitle(getString(R.string.notification_enabled_title))
             .setContentText(getString(R.string.notification_enabled_body))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
         val notificationManager = NotificationManagerCompat.from(requireContext())
         notificationManager.notify(1001, builder.build())
     }
