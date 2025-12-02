@@ -155,7 +155,7 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    //Asks for notification permission
+    //Asks for notification permission (pls say yes)
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
